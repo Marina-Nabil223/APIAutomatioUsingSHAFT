@@ -1,0 +1,54 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      testsPath:
+        description: 'Path to Tests to be Executed'
+        default: ''
+
+jobs:
+  E2E_Chrome_Linux_Test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 20
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '20'
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
+
+      - name: Run Tests
+        continue-on-error: true
+        run: mvn test -DheadlessExecution="true" -Dtest="${{ github.event.inputs.testsPath }}"
+     
+
+  E2E_Firefox_Windows_Test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup JDK 20
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu' # See 'Supported distributions' for available options
+          java-version: '20'
+      
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v4.5
+        with:
+          maven-version: 3.9.6
+
+      - name: Run Tests
+        continue-on-error: true
+        run: mvn test -DheadlessExecution="false"  -Dtest="${{ github.event.inputs.testsPath }}"
+      
+    
